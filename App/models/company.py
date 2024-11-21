@@ -2,49 +2,53 @@ from App.database import db
 from .user import User
 
 class Company(User):
-    # id = db.Column(db.Integer, primary_key = True)
-    # id = db.Column(db.Integer)
-
-    # company_name = db.Column(db.String, primary_key = True)
+    company_id = db.Column(db.String, primary_key=True)  
     company_name = db.Column(db.String, unique=True, nullable=False)
-
-    # insert other company information here later
-    # hrname = db.Column(db.String(120))
-    # hremail = db.column(db.String(120))
     company_address = db.Column(db.String(120))
-
     contact = db.Column(db.String())
+    website = db.Column(db.String(120))
 
-    company_website = db.Column(db.String(120))
+    listings = db.relationship('Listing', backref='company', lazy=True, cascade="all, delete-orphan")
+    applications = db.relationship('Application', backref='company', lazy=True, cascade="all, delete-orphan")
+    employee_id = db.Column(db.String, db.ForeignKey('employee.id'))
 
 
+    employee = db.relationship('Employee', backref='company', uselist=False)
 
-     
-
-    # set up relationship with Listing object (1-M)
-    listings = db.relationship('Listing', backref='company', lazy=True)
-
-    # maybe relationship with alumni? list of alumni as subscribers?
-    # applicants?
-    # applicants = db.relationship('Alumni', backref='company', lazy=True)
-
-    def __init__(self, username, company_name, password, email, company_address, contact, company_website):
+    def __init__(self, username, password, email, company_id, company_name, company_address, contact, website,employee_id):
         super().__init__(username, password, email)
+        self.company_id = company_id
         self.company_name = company_name
         self.company_address = company_address
         self.contact = contact
-        self.company_website = company_website
-        
+        self.website = website
+        self.employee_id= employee_id
+
+    def submit(self, listing):
+        db.session.add(listing)
+        db.session.commit()
+
+    def get_listings(self):
+        return [listing.get_json() for listing in self.listings]
+    
+    def view_notifications(self, notifications):
+        return [notification.get_json() for notification in notifications]
+    
+    def delete_listing(self, listing):
+        if listing in self.listings:
+            db.session.delete(listing)
+            db.session.commit()
+        else:
+            raise ValueError(f"Listing {listing.title} does not belong to this company.")
+
+
     def get_json(self):
-        return{
-            'id': self.id,
+        return {
+            'company_id': self.company_id,
             'company_name': self.company_name,
             'email': self.email,
-            'company_address':self.company_address,
-            'contact':self.contact,
-            'company_website':self.company_website
+            'company_address': self.company_address,
+            'contact': self.contact,
+            'website': self.website,
+            'listings': [listing.get_json() for listing in self.listings]
         }
-    
-    def get_name(self):
-        return self.company_name
-    

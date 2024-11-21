@@ -1,5 +1,9 @@
+import uuid
+
+from flask import request
 from App.database import db
 from sqlalchemy import CheckConstraint
+from App.models import application
 
 # categories list for possible job categories
 categories = [
@@ -7,40 +11,44 @@ categories = [
     'Big Data', 'Algorithms', 'N/A']
 
 class Listing(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
-    title = db.Column(db.String(120), nullable = False, unique=True)
+    listing_id = db.Column(db.String, primary_key=True)  # Unique identifier
+    title = db.Column(db.String(120), nullable=False, unique=True)
     description = db.Column(db.String(500))
-    job_category = db.Column(db.String(120))
-    salary = db.Column(db.Integer(), nullable=False)
+    company_id = db.Column(db.String, db.ForeignKey('company.company_id'), nullable=False)  # Foreign key to Company
+    salary = db.Column(db.String(), nullable=False)
     position = db.Column(db.String(), nullable=False)
     remote = db.Column(db.Boolean, default=False)
     ttnational = db.Column(db.Boolean, default=False)
-    desiredcandidate = db.Column(db.String(120), nullable=False)
+    desired_candidate = db.Column(db.String(120), nullable=False)
     area = db.Column(db.String(120), nullable=False)
-    # requests for deletion?----- Don't take out this comment yet... ~Tamia
+    job_category = db.Column(db.String(180), nullable=False,default='N/A')
     request = db.Column(db.String())
 
-    # set up relationship with Company (M-1)
-    company_name = db.Column(db.String(), db.ForeignKey('company.company_name'), nullable=False)
-    companies = db.relationship('Company', back_populates='listings', overlaps="company")
 
-    # Define relationship to applications..... ~Tamia
-    #[-----------HERE----------]
-    
+    # requests for deletion?----- Don't take out this comment yet... ~Tamia
+    #Done by admin who approves
+    approved = db.Column(db.Boolean, default=False)
+
+    # Relationship with applications (1-to-many)
+    applications = db.relationship('Application', backref='listing', lazy=True, cascade="all, delete-orphan")
+
+    # Foreign key to the Company table
+    company_id = db.Column(db.String, db.ForeignKey('company.company_id'), nullable=False)
+
+    # Relationship with Company (M-1)
+    company = db.relationship('Company', back_populates='listing')
+
 
     __table_args__ = (
         CheckConstraint(position.in_(['Full-time', 'Part-time', 'Contract', 'Internship', 'Freelance']), name = 'check_position_value'),
         CheckConstraint(request.in_(['Delete', 'Edit', 'None']), name = 'check_request_value'),
     )
-
     
-
-
-    def __init__(self, title, description, company_name, job_categories, salary,
-                position, remote, ttnational, desiredcandidate, area):
+    def __init__(self, listing_id, title, description, company_id, salary, position, remote, ttnational, desired_candidate, area):
+        self.listing_id = listing_id
         self.title = title
         self.description = description
-        self.company_name = company_name
+        self.company_id = company_id
 
         if job_categories is None:
             self.job_category = 'N/A'
@@ -51,13 +59,13 @@ class Listing(db.Model):
         self.position = position
         self.remote = remote
         self.ttnational = ttnational
-        self.desiredcandidate = desiredcandidate
+        self.desired_candidate = desired_candidate
         self.area = area
-
+        self.approved = False
         self.request = 'None'
 
     def get_company(self):
-        return self.company_name
+        return self.company
 
     # methods to support adding, removing, validating the job categories
     def validate_and_set_categories(self, job_categories):
@@ -65,10 +73,10 @@ class Listing(db.Model):
         self.job_category = '|'.join(valid_categories)
 
     def get_categories(self):
-        return self.job_category.split('|') if self.job_category else []
+        return self.job_category.split('|')
 
     def get_applicants(self):
-        return self.applicant
+        return self.applications
 
     def add_category(self, category):
         categories = self.get_categories()
@@ -86,17 +94,38 @@ class Listing(db.Model):
         else:
             print(f"Category '{category}' does not exist.")
 
-    def get_json(self):
-        return{
-            'id': self.id,
-            'title':self.title,
-            'description':self.description,
-            'company_name':self.company_name,
-            'job_category':self.get_categories(),
-            'salary':self.salary,
-            'position':self.position,
-            'remote':self.remote,
-            'ttnational':self.ttnational,
-            'desiredcandidate':self.desiredcandidate,
-            'area':self.area,
+        
+    # Possible Controller could be implemented
+    def submit_application(self, alumini_id,date_applied,listing_id):
+        new_application = application.Application(
+            application_id = str(uuid.uuid4()),
+            listing_id = self.listing_id,
+            alumini_id = alumini_id,
+            date_applied = date_applied,
+        )
+        
+        # Add to the database session
+        db.session.add(new_application)
+        db.session.commit()
+
+        return {
+            "message": "Application submitted successfully.",
+            "application_id": new_application.application_id
         }
+
+
+    def get_json(self):
+        return {
+            'listing_id': self.listing_id,
+            'title': self.title,
+            'description': self.description,
+            'company_id': self.company_id,
+            'salary': self.salary,
+            'position': self.position,
+            'remote': self.remote,
+            'ttnational': self.ttnational,
+            'desired_candidate': self.desired_candidate,
+            'area': self.area,
+            'jobCategories': (self.get_categories),
+            'applications': [self.applications.get_json() for application in self.applications],         
+}
