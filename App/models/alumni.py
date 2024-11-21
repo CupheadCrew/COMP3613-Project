@@ -18,6 +18,8 @@ class Alumni(User):
 
     # Define relationship to listings
     listing = db.relationship('Listing', secondary='alumni_listings', back_populates='applicant')
+    listingsApplied = listing.Listing()
+
 
     # relationship to listings to receive notifications?
     subscribed = db.Column(db.Boolean, default=False)
@@ -30,10 +32,26 @@ class Alumni(User):
     firstname = db.Column(db.String(120), nullable = False)
     lastname = db.Column(db.String(120), nullable = False)
 
+    # Skills
+    skills = db.Column(db.String(1200), nullable = False)
+
+    # Experience
+    experience = db.Column(db.String(1200), nullable = False)
+
+    # Nationality
+    nationality = db.Column(db.String(120), nullable = False)
+
+
+
     # relationship with files?
     # files = db.relationship('File', back_populates='alumni', lazy=True)
 
     # categories = ['Software Engineering', 'Database', 'Programming', 'N/A']
+    categories = []
+    for i in categories:
+        categories[i] = listing.categories[i]
+
+    
     job_category = db.Column(db.String(120))
 
     def __init__(self, username, password, email, alumni_id, contact, firstname, lastname):
