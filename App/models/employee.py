@@ -9,6 +9,8 @@ class Employee(User):
 
     employee_password = db.Column(db.String(120), nullable=False)
 
+    department = db.Column(db.String(120), nullable=False)
+
 
 def __init__(self, employee_id, employee_name, employee_password):
         self.employee_id = employee_id
