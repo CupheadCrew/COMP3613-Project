@@ -1,8 +1,7 @@
 from werkzeug.security import check_password_hash, generate_password_hash
 from App.database import db
 from .user import User
-from .application import Application
-from .listing import Listing 
+ 
 
 class Employee(User):
     employee_id = db.Column(db.String, unique=True, nullable=False)
@@ -33,12 +32,10 @@ def get_name(self):
 def set_password(self, password):
         """Create hashed password."""
         self.employee_password = generate_password_hash(password, method='sha256')
-    
+
+
+
 def check_password(self, password):
         """Check hashed password."""
         return check_password_hash(self.employee_password, password)
 
-def veiw_application(id, application_id):
-        
-
-        return 
