@@ -5,11 +5,12 @@ from flask.cli import with_appcontext, AppGroup
 from App.database import db, get_migrate
 from App.main import create_app
 from App.controllers import ( create_user, get_all_users_json, get_all_users, get_all_admins, get_all_admins_json,
-     add_admin, add_alumni, add_company, add_listing, add_categories, remove_categories,
+     add_admin, add_alumni, add_employee, add_company, add_listing, add_categories, remove_categories,
      get_all_companies, get_all_companies_json,
      get_all_alumni, get_all_alumni_json, get_all_listings, get_all_listings_json, get_company_listings, get_all_subscribed_alumni,
      is_alumni_subscribed, send_notification, apply_listing, get_all_applicants,
      get_user_by_username, get_user, get_listing, delete_listing, subscribe, unsubscribe,
+     get_employee, get_all_employees, get_all_employees_json,
      login)
 from App.views.alumni import subscribe_action
 
@@ -42,6 +43,9 @@ def initialize():
     # add in companies
     add_company('BeachTech', 'company_address', 'contact', 'company_website.com')
     add_company('SpaceCo', 'company_address2', 'contact2', 'company_website2.com')
+
+    #add in employees
+    add_employee('hob', 'hobpass', 'hob@mail', '12345678', 'hobfname', 'hoblname', 'Accounting')
 
     # add in listings
     # listing1 = add_listing('listing1', 'job description', 'company2')
@@ -101,6 +105,7 @@ app.cli.add_command(user_cli) # add the group to the cli
 # add in command groups and commands for:
 # - admin
 # - alumni 
+# - employee
 # - business 
 # - listing
 
@@ -202,6 +207,35 @@ def apply_listing_command(alumni_id, listing_title):
         print(f'{alumni} applied to listing {listing_title}')
 
 app.cli.add_command(alumni_cli)
+
+# employee commands
+employee_cli = AppGroup('employee', help='Employee Object commands')
+
+#flask employee list
+@employee_cli.command("list", help="Lists employees in the database")
+@click.argument("format", default="string")
+def list_alumni_command(format):
+    if format == 'string':
+        print(get_all_employees())
+    else:
+        print(get_all_employees_json())
+
+# flask employee add
+@alumni_cli.command("add", help = "Add an employee object to the database")
+@click.argument("username", default="hob2")
+@click.argument("password", default="hobpass")
+@click.argument("email", default="hob@mail2")
+@click.argument("employee_id", default="098765432")
+@click.argument("department", default="Sales")
+# @click.argument("job_categories", default='Database')
+def add_employee_command(username, password, email, employee_id):
+    employee = add_employee(username, password, email, alumni_id)
+
+    if employee is None:
+        print('Error creating employee')
+    else:
+        print(f'{employee} created!')
+
 
 # company commands
 company_cli = AppGroup('company', help='Company object commands')
