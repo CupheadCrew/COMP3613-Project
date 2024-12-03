@@ -38,4 +38,6 @@ def get_all_listings_json():
     listings = [listing.get_json() for listing in listings]
     return listings
 
+
+
 # get all listings by company name

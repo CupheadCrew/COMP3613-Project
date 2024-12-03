@@ -17,6 +17,10 @@ class Listing(db.Model):
     ttnational = db.Column(db.Boolean, default=False)
     desiredcandidate = db.Column(db.String(120), nullable=False)
     area = db.Column(db.String(120), nullable=False)
+
+    #attributes to help with checking approval
+    seen = db.Column(db.Boolean, default=False)
+    approved = db.Column(db.Boolean, default=False)
     # requests for deletion?----- Don't take out this comment yet... ~Tamia
     request = db.Column(db.String())
 
@@ -53,6 +57,8 @@ class Listing(db.Model):
         self.ttnational = ttnational
         self.desiredcandidate = desiredcandidate
         self.area = area
+        self.seen = False
+        self.approved = False
 
         self.request = 'None'
 
@@ -99,4 +105,6 @@ class Listing(db.Model):
             'ttnational':self.ttnational,
             'desiredcandidate':self.desiredcandidate,
             'area':self.area,
+            'seen':self.seen,
+            'approved':self.approved
         }
