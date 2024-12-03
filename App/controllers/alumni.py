@@ -1,4 +1,4 @@
-from App.models import User, Alumni, Admin, Company, Listing
+from App.models import User, Alumni, Admin, Company, Listing, Employee
 from App.database import db
 
 
@@ -8,10 +8,10 @@ def add_alumni(username, password, email, alumni_id, contact, firstname, lastnam
         if (
             # Alumni.query.filter_by(username=username).first() is not None or
             Admin.query.filter_by(username=username).first() is not None or
-            #Company.query.filter_by(username=username).first() is not None or
+            Employee.query.filter_by(username=username).first() is not None or
 
-            #Company.query.filter_by(email=email).first() is not None or
-            Admin.query.filter_by(email=email).first() is not None
+            Employee.query.filter_by(email=email).first() is not None or
+            Admin.query.filter_by(email=email).first() is not None 
             # Alumni.query.filter_by(email=email).first() is not None
             
         ):

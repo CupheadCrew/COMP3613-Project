@@ -45,7 +45,8 @@ def initialize():
     add_company('SpaceCo', 'company_address2', 'contact2', 'company_website2.com')
 
     #add in employees
-    add_employee('hob', 'hobpass', 'hob@mail', '12345678', 'hobfname', 'hoblname', 'Accounting')
+    # add_employee('hob', 'hobpass', 'hob@mail', '234567890', 'hobfname', 'hoblname', 'Accounting')
+    # add_employee('username', 'password', 'email', 20, 'firstname', 'lastname', 'department')
 
     # add in listings
     # listing1 = add_listing('listing1', 'job description', 'company2')
@@ -214,7 +215,7 @@ employee_cli = AppGroup('employee', help='Employee Object commands')
 #flask employee list
 @employee_cli.command("list", help="Lists employees in the database")
 @click.argument("format", default="string")
-def list_alumni_command(format):
+def list_employee_command(format):
     if format == 'string':
         print(get_all_employees())
     else:
@@ -226,10 +227,12 @@ def list_alumni_command(format):
 @click.argument("password", default="hobpass")
 @click.argument("email", default="hob@mail2")
 @click.argument("employee_id", default="098765432")
+@click.argument("first_name", default="hobbs")
+@click.argument("last_name", default="Hob")
 @click.argument("department", default="Sales")
 # @click.argument("job_categories", default='Database')
-def add_employee_command(username, password, email, employee_id):
-    employee = add_employee(username, password, email, alumni_id)
+def add_employee_command(username, password, email, employee_id, first_name, last_name, department):
+    employee = add_employee(username, password, email, employee_id, first_name, last_name,department)
 
     if employee is None:
         print('Error creating employee')

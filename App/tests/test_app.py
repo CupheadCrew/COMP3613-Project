@@ -3,7 +3,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from App.main import create_app
 from App.database import db, create_db
-from App.models import User, Admin, Alumni, Company, Listing
+from App.models import User, Admin, Alumni, Company, Listing, Employee
 from App.controllers import (
     create_user,
     get_all_users_json,
@@ -21,6 +21,8 @@ from App.controllers import (
     apply_listing,
     get_all_applicants,
     get_alumni,
+    add_employee,
+    get_employee
 )
 
 
@@ -46,6 +48,12 @@ class UserUnitTests(unittest.TestCase):
     def test_new_company(self):
         company = Company('company1', 'company1', 'compass', 'company@mail',  'company_address', 'contact', 'company_website.com')
         assert company.company_name == 'company1'
+
+        #Emp test#
+    # def test_new_employee(self):
+    #     employee = Employee('hob', 'hobpass', 'hob@mail', '234567890', 'hobfname', 'hoblname', 'Accounting')
+    #     assert employee.username == 'hob'
+        #Emp test#
 
     # pure function no side effects or integrations called
     def test_get_json(self):
