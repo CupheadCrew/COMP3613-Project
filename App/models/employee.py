@@ -13,7 +13,8 @@ class Employee(User):
 #     subscribed = db.Column(db.Boolean, default=False)
 
 
-def __init__(self, employee_id, employee_name, employee_password):
+def __init__(self,username, password, email, employee_id, first_name, last_name, department):
+        super().__init__(username, password, email)
         self.employee_id = employee_id
         self.first_name = first_name
         self.last_name = last_name
