@@ -84,10 +84,7 @@ def unsubscribe(alumni_id):
     return alumni
 
     
-def set_modal_window(alumni_id):
-    alumni = get_alumni(alumni_id)
-    alumni.modal_window = True
-    db.session.commit()
+
 
 
 # def subscribe_action(alumni_id, job_category=None):
