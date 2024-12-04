@@ -10,7 +10,7 @@ from App.controllers import ( create_user, get_all_users_json, get_all_users, ge
      get_all_alumni, get_all_alumni_json, get_all_listings, get_all_listings_json, get_company_listings, get_all_subscribed_alumni,
      is_alumni_subscribed, send_notification, apply_listing, get_all_applicants,
      get_user_by_username, get_user, get_listing, delete_listing, subscribe, unsubscribe,
-     login)
+     login, add_employee)
 from App.views.alumni import subscribe_action
 
 # This commands file allow you to create convenient CLI commands for testing controllers
@@ -38,6 +38,8 @@ def initialize():
     # add in alumni
     add_alumni('rob', 'robpass', 'rob@mail', '123456789', '1868-333-4444', 'robfname', 'roblname')
     
+    #add in employee
+    add_employee( 'emp', 'emppass', 'emp@mail',1, 'emp', 'loyee', 'Sales')
 
     # add in companies
     add_company('BeachTech', 'company_address', 'contact', 'company_website.com')

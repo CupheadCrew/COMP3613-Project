@@ -2,16 +2,13 @@ from App.database import db
 from .user import User
 
 class Employee(User):
-    employee_id = db.Column(db.String, unique=True, nullable=False)
+    employee_id = db.Column(db.Integer, unique=True, nullable=False)
 
-    first_name = db.Column(db.String(120), nullable=False)
+    first_name = db.Column(db.String(120), nullable=True)
 
-    last_name = db.Column(db.String(120), nullable=False)
+    last_name = db.Column(db.String(120), nullable=True)
 
-    department = db.Column(db.String(120), nullable=False)
-
-#     subscribed = db.Column(db.Boolean, default=False)
-
+    department = db.Column(db.String(120), nullable=True)
 
 def __init__(self,username, password, email, employee_id, first_name, last_name, department):
         super().__init__(username, password, email)
