@@ -14,7 +14,8 @@ from App.controllers import(
     add_listing,
     add_categories,
     get_listing,
-    delete_listing
+    delete_listing,
+    get_all_listings_published
 )
 
 from App.models import(
@@ -45,6 +46,25 @@ def delete_listing_action(job_id):
         response = redirect(url_for('index_views.index_page'))
     else:
         flash('Error deleting job listing', 'unsuccessful')
+        response = (redirect(url_for('index_views.login_page')))
+
+    return response
+
+@admin_views.route('/toggle_listing/<int:job_id>', methods=['PUT'])
+@jwt_required
+def toggle_listing_action(job_id):
+
+    job = get_listing(job_id)
+
+    job.toggle
+
+    response = None
+
+    if job:
+        flash('Job has been approved', 'success')
+        response = redirect(url_for('index_views.index_page'))
+    else:
+        flash('Error updating this job', 'unsuccessful')
         response = (redirect(url_for('index_views.login_page')))
 
     return response

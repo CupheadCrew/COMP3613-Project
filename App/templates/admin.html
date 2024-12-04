@@ -142,8 +142,8 @@
     </div>
     <div class="container">
         <div>
-            <button class="button" onclick="filterByStatus('published')">Published</button>
-            <button class="button" onclick="filterByStatus('unpublished')">Unpublished</button>
+            <button class="button" onclick="filterByStatus('published')" >Published</button>
+            <button class="button" onclick="filterByStatus('unpublished')" >Unpublished</button>
         </div>
         <table id="jobTable">
             <thead>
@@ -165,7 +165,8 @@
                     <td class="actions">
                         <button onclick="editListing(0)">Edit</button>
                         <a href="/delete_listing/{{job.id}}">Delete</a>
-                        <button class="publish-button" onclick="togglePublish(0)">Publish</button>
+                        <a href="/approve_listing/{{job.id}}">Toggle</a>
+                        <!-- <button class="publish-button" onclick="togglePublish(0)">Publish</button> -->
                     </td>
                 </tr>
             </tbody>
@@ -195,10 +196,12 @@
             if (isPublished) {
                 row.classList.remove('published');
                 publishButton.textContent = "Publish";
+                // {{job.approved = false}}
                 alert("Job listing unpublished.");
             } else {
                 row.classList.add('published');
                 publishButton.textContent = "Unpublish";
+                // {{job.approved=true}}
                 alert("Job listing published.");
             }
         }

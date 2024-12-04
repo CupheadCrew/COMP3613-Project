@@ -63,6 +63,16 @@ def delete_listing(listing_id):
 
     return None
 
+#approve listings
+def approve_job(listing_id):
+    from .listing import get_listing_approved
+
+    listing = get_listing_approved(listing_id)
+
+    if not listing:
+        return
+    return listing
+        
 # def delete_exerciseSet(exerciseSet_id):
 
 #     exerciseSets = ExerciseSet.query.filter_by(id=exerciseSet_id).all()

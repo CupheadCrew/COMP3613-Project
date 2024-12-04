@@ -10,7 +10,7 @@ from App.controllers import ( create_user, get_all_users_json, get_all_users, ge
      get_all_alumni, get_all_alumni_json, get_all_listings, get_all_listings_json, get_company_listings, get_all_subscribed_alumni,
      is_alumni_subscribed, send_notification, apply_listing, get_all_applicants,
      get_user_by_username, get_user, get_listing, delete_listing, subscribe, unsubscribe,
-     login, add_employee, get_all_employees, get_all_employees_json)
+     login, add_employee, get_all_employees, get_all_employees_json, get_all_listings_approved) #get_all_listing_approved_json)
 from App.views.alumni import subscribe_action
 
 # This commands file allow you to create convenient CLI commands for testing controllers
@@ -49,10 +49,10 @@ def initialize():
     # listing1 = add_listing('listing1', 'job description', 'company2')
     # print(listing1, 'test')
     add_listing('listing1', 'job description1', 'BeachTeach',
-                8000, 'Part-time', True, True, 'desiredCandidate?', 'Curepe', ['Database Manager', 'Programming', 'butt'])
+                8000, 'Part-time', True, True, 'desiredCandidate?', 'Curepe', ['Database Manager', 'Programming', 'butt'],'True','True')
 
     add_listing('listing2', 'job description', 'SpaceCo',
-                4000, 'Full-time', True, True, 'desiredCandidate?', 'Curepe', ['Database Manager', 'Programming', 'butt'])
+                4000, 'Full-time', True, True, 'desiredCandidate?', 'Curepe', ['Database Manager', 'Programming', 'butt'], 'True', 'False')
 
     
 
@@ -236,6 +236,7 @@ def add_employee_command(username, password, email, employee_id, first_name, las
     else:
         print(f'{employee} created!')
 
+app.cli.add_command(employee_cli)
 
 
 # company commands
@@ -318,6 +319,15 @@ def get_listing_applicants_command(listing_id):
         print(f'Error getting applicants')
     else:
         print(applicants)
+
+#flask list for approved listing
+@listing_cli.command("approved", help="Get all jobs that were approved by an admin")
+@click.argument("format", default="string")
+def list_listing_command(format):
+    if format == 'string':
+        print(get_all_listings_approved())
+    else:
+        print(get_all_listing_approved_json())
 
 app.cli.add_command(listing_cli)
 

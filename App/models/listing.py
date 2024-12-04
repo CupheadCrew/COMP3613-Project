@@ -17,10 +17,12 @@ class Listing(db.Model):
     ttnational = db.Column(db.Boolean, default=False)
     desiredcandidate = db.Column(db.String(120), nullable=False)
     area = db.Column(db.String(120), nullable=False)
-
-    #attributes to help with checking approval
     seen = db.Column(db.Boolean, default=False)
     approved = db.Column(db.Boolean, default=False)
+    #attributes to help with checking approval
+
+    
+    
     # requests for deletion?----- Don't take out this comment yet... ~Tamia
     request = db.Column(db.String())
 
@@ -39,9 +41,13 @@ class Listing(db.Model):
 
     
 
+    def toggle(self):
+        self.approved = not self.approved
+        db.session.add(self)
+        db.session.commit()
 
     def __init__(self, title, description, company_name, job_categories, salary,
-                position, remote, ttnational, desiredcandidate, area):
+                position, remote, ttnational, desiredcandidate, area, seen, approved):
         self.title = title
         self.description = description
         self.company_name = company_name
@@ -57,8 +63,8 @@ class Listing(db.Model):
         self.ttnational = ttnational
         self.desiredcandidate = desiredcandidate
         self.area = area
-        self.seen = False
-        self.approved = False
+        self.seen = seen
+        self.approved = approved
 
         self.request = 'None'
 
