@@ -1,12 +1,15 @@
-from flask import Blueprint, redirect, render_template, request, send_from_directory, jsonify, url_for, flash
+# from flask import Blueprint, redirect, render_template, request, send_from_directory, jsonify, url_for, flash
 
+# from App.models import db
+# # from App.controllers import create_user
+# from flask import jwt_required, current_user, unset_jwt_cookies, set_access_cookies
+# from flask_jwt_extended import jwt_required
+# # from flask_jwt_extended import JWTManager
+
+from flask import Blueprint, redirect, render_template, request, send_from_directory, jsonify, url_for, flash
 from App.models import db
 # from App.controllers import create_user
-
-from flask import jwt_required, current_user, unset_jwt_cookies, set_access_cookies
-from flask_jwt_extended import jwt_required
-from flask_jwt_extended import JWTManager
-
+from flask_jwt_extended import jwt_required, current_user, unset_jwt_cookies, set_access_cookies
 
 from App.controllers import(
     get_all_listings,
@@ -196,7 +199,10 @@ def init():
 
     add_listing('listing2', 'job description', 'SpaceCo',
                 4000, 'Full-time', True, True, 'desiredCandidate?', 'Curepe', ['Database Manager', 'Programming', 'butt'])
-
     return jsonify(message='db initialized!')
-    
+
+   
+@index_views.route('/health', methods=['GET'])
+def health_check():
+    return jsonify({'status':'healthy'})    
 
