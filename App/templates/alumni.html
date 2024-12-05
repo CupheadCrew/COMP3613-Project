@@ -462,12 +462,12 @@
         </div>       
     </div>
     <script>
-  document.addEventListener("DOMContentLoaded", function() {
-    const jobCards = document.querySelectorAll('.job_card');
-    const searchInput = document.getElementById('searchInput');
-    const expandBtns = document.querySelectorAll('.expand-btn');
-    const applyBtns = document.querySelectorAll('.applyBtn'); // Select all apply buttons
-    const closeFormBtns = document.querySelectorAll('.close-btn'); // Select all close buttons
+    document.addEventListener("DOMContentLoaded", function() {
+        const jobCards = document.querySelectorAll('.job_card');
+        const searchInput = document.getElementById('searchInput');
+        const expandBtns = document.querySelectorAll('.expand-btn');
+        const applyBtns = document.querySelectorAll('.applyBtn'); // Select all apply buttons
+        const closeFormBtns = document.querySelectorAll('.close-btn'); // Select all close buttons
 
     expandBtns.forEach((expandBtn) => {
         expandBtn.addEventListener('click', function() {
@@ -572,9 +572,8 @@
                 console.log("Subscribing email:", emailInput, "Category:", categoryInput);
                 hidePopup();
             });
-        });
-
-        closeButton.addEventListener("click", function () {
+        
+            closeButton.addEventListener("click", function () {
                 fetch("/update_modal_window", {
                     method: "POST",
                     headers: {
@@ -591,6 +590,8 @@
                         console.error('Error:', error);
                     });
             });
+
+        });
 
         
 
