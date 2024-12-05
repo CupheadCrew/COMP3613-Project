@@ -215,6 +215,74 @@ class TestApplyToListing(unittest.TestCase):
         self.assertEqual(result[0], 404)
         self.assertEqual(result[1]["message"], "Alumni or Listing not found!")
 
+    class TestAddInfoToApplication(unittest.TestCase):
+        @patch('App.models.Application.query.filter_by')
+        @patch('App.models.Alumni.query.get')
+        @patch('App.models.db.session.commit')
+        def test_add_info_to_application(self, mock_commit, mock_alumni_query, mock_application_query):
+            application_id = 1
+            alumni_id = 123
+            additional_info = {"skills": "Python, SQL", "hobbies": "Reading"}
+
+            # Mock Alumni profile
+            alumni_profile = {"skills": "Python, SQL", "education": "BSc CS", "hobbies": "Reading"}
+
+            # Creating a mock application object
+            mock_application = MagicMock(spec=Application)
+            mock_application.additional_info = None
+            
+            # Mock alumni object
+            mock_alumni = MagicMock(spec=Alumni)
+            mock_alumni.profile = alumni_profile
+
+            # Mocking the database queries
+            mock_application_query.return_value.first.return_value = mock_application
+            mock_alumni_query.return_value = mock_alumni
+
+            # Call the function under test
+            result = add_info_to_application(application_id, alumni_id, additional_info)
+            
+            # Assert the application is updated with additional_info
+            self.assertIn("skills", mock_application.additional_info)
+            self.assertIn("hobbies", mock_application.additional_info)
+            self.assertEqual(mock_application.additional_info["skills"], "Python, SQL")
+            self.assertEqual(mock_application.additional_info["hobbies"], "Reading")
+            
+            # Assert that db commit was called
+            mock_commit.assert_called_once()
+
+        @patch('App.models.Application.query.filter_by')
+        @patch('App.models.Alumni.query.get')
+        def test_application_not_found(self, mock_alumni_query, mock_application_query):
+            application_id = 1
+            alumni_id = 123
+            additional_info = {"skills": "Python, SQL"}
+
+            # Mock the queries to return None
+            mock_application_query.return_value.first.return_value = None
+            mock_alumni_query.return_value = MagicMock(spec=Alumni)
+
+            result = add_info_to_application(application_id, alumni_id, additional_info)
+            
+            # Check the error response
+            self.assertEqual(result, {"error": "Application not found or unauthorized."})
+
+        @patch('App.models.Application.query.filter_by')
+        @patch('App.models.Alumni.query.get')
+        def test_alumni_not_found(self, mock_alumni_query, mock_application_query):
+            application_id = 1
+            alumni_id = 123
+            additional_info = {"skills": "Python, SQL"}
+
+            # Mock application found but alumni not found
+            mock_application_query.return_value.first.return_value = MagicMock(spec=Application)
+            mock_alumni_query.return_value = None
+
+            result = add_info_to_application(application_id, alumni_id, additional_info)
+
+            # Check the error response
+            self.assertEqual(result, {"error": "Alumni not found."})
+
 
 '''
     Integration Tests
