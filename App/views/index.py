@@ -169,8 +169,8 @@ def submit_application_action():
 
 
 
-@index_views.cli.command("init", help="Creates and initializes the database")
-def initialize():
+@index_views.route('/init', methods=['GET'])
+def init():
     db.drop_all()
     db.create_all()
     # create_user('bob', 'bobpass')
