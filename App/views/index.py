@@ -197,17 +197,6 @@ def initialize():
     add_listing('listing2', 'job description', 'SpaceCo',
                 4000, 'Full-time', True, True, 'desiredCandidate?', 'Curepe', ['Database Manager', 'Programming', 'butt'])
 
+    return jsonify(message='db initialized!')
     
 
-
-    # print(get_all_listings_json())
-    print(get_company_listings('SpaceCo'))
-    
-
-    print(get_all_subscribed_alumni())
-    # send_notification(['Programming'])
-    # create_user('username', 'password', 'email')
-    # print(get_user_by_username('rob'))
-    # print(jwt_authenticate('bob', 'bobpass'))
-
-    print('database intialized')
