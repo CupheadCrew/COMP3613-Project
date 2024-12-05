@@ -390,8 +390,28 @@ class UsersIntegrationTests(unittest.TestCase):
         assert response.status_code == 200
         assert response.json == {"message": "Information added successfully!"}
 
+def test_apply_to_listing_integration(test_client):
+    # Add a mock alumni and listing to the database
+    alumni = Alumni(id=1, alumni_name="Jane Doe")
+    listing = Listing(id=1, title="Software Engineer")
+    db.session.add(alumni)
+    db.session.add(listing)
+    db.session.commit()
 
+    # Call the function with valid data
+    response = test_client.post(
+        "/apply_to_listing",  # Assume this is the API endpoint
+        json={"alumni_id": 1, "listing_id": 1}
+    )
 
+    # Check that the application was created
+    application = Application.query.filter_by(alumni_id=1, listing_id=1).first()
+    assert application is not None
+    assert application.date_applied is not None
+
+    # Check that the notification was triggered (use a mock or spy for notifications)
+    assert response.status_code == 200
+    assert response.json == {"message": "Application submitted successfully!"}
 
     # def test_create_user(self):
     #     user = create_user("rick", "bobpass")
