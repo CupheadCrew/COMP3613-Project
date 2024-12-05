@@ -136,6 +136,41 @@ def add_admin_command(username, password, email):
 app.cli.add_command(admin_cli)
 
 
+# employee commands
+employee_cli = AppGroup('employee', help='Employee object commands')
+
+# flask employee list
+@employee_cli.command("list", help="Lists employees in the database")
+@click.argument("format", default="string")
+def list_employee_command(format):
+    if format == 'string':
+        print(get_all_employees())
+    else:
+        print(get_all_employees_json())
+
+
+# flask employee add
+@employee_cli.command("add", help = "Add an employee object to the database")
+@click.argument("username", default="hob2")
+@click.argument("password", default="hobpass")
+@click.argument("email", default="hob@mail2")
+@click.argument("employee_id", default="876543210")
+@click.argument("first_name", default="fname")
+@click.argument("last_name", default="lname")
+@click.argument("department", default="Software Engineering")
+# @click.argument("job_categories", default='Database')
+def add_employee_command(username, password, email, employee_id, first_name, last_name, department):
+    employee = add_employee(username, password, email, employee_id, first_name, last_name, department)
+
+    if employee is None:
+        print('Error creating employee')
+    else:
+        print(f'{employee} created!')                                                                 
+
+app.cli.add_command(employee_cli)
+
+
+
 # alumni commands
 alumni_cli = AppGroup('alumni', help='Alumni object commands')
 
