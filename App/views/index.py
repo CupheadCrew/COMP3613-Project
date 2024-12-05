@@ -1,8 +1,11 @@
 from flask import Blueprint, redirect, render_template, request, send_from_directory, jsonify, url_for, flash
+
 from App.models import db
 # from App.controllers import create_user
 
-from flask_jwt_extended import jwt_required, current_user, unset_jwt_cookies, set_access_cookies
+from flask import jwt_required, current_user, unset_jwt_cookies, set_access_cookies
+from flask_jwt_extended import jwt_required
+from flask_jwt_extended import JWTManager
 
 
 from App.controllers import(
@@ -13,7 +16,9 @@ from App.controllers import(
     add_alumni,
     add_admin,
     add_company,
-    get_listing
+    get_listing,
+    add_employee,
+    get_all_subscribed_alumni
 )
 
 from App.models import(
@@ -164,9 +169,8 @@ def submit_application_action():
 
 
 
-
-@index_views.route('/init', methods=['GET'])
-def init():
+@index_views.cli.command("init", help="Creates and initializes the database")
+def initialize():
     db.drop_all()
     db.create_all()
     # create_user('bob', 'bobpass')
@@ -176,38 +180,34 @@ def init():
 
     # add in alumni
     add_alumni('rob', 'robpass', 'rob@mail', '123456789', '1868-333-4444', 'robfname', 'roblname')
-
-    # add_alumni('rooooob', 'robpass', 'roooooob@mail', '123456089')
-
-    # add_categories('123456789', ['Database'])
-    # print('test')
-
-    # remove_categories('123456789', ['N/A'])
-    # remove_categories('123456789', ['Database'])
     
-
-    # subscribe rob
-    # subscribe_action('123456789')
+    #add in employee
+    add_employee('hob', 'hobpass', 'hob@mail', '234567890', 'hobfname', 'hoblname', 'Accounting')
 
     # add in companies
-    add_company('company1', 'company1', 'compass', 'company@mail',  'company_address', 'contact', 'company_website.com')
-    add_company('company2', 'company2', 'compass', 'company@mail2',  'company_address2', 'contact2', 'company_website2.com')
+    add_company('BeachTech', 'company_address', 'contact', 'company_website.com')
+    add_company('SpaceCo', 'company_address2', 'contact2', 'company_website2.com')
 
     # add in listings
     # listing1 = add_listing('listing1', 'job description', 'company2')
     # print(listing1, 'test')
-    add_listing('listing1', 'job description1', 'company1',
-                8000, 'Part-time', True, 'employmentTerm!', True, 'desiredCandidate?', 'Curepe', ['Database', 'Programming', 'butt'])
+    add_listing('listing1', 'job description1', 'BeachTeach',
+                8000, 'Part-time', True, True, 'desiredCandidate?', 'Curepe', ['Database Manager', 'Programming', 'butt'])
 
-    add_listing('listing2', 'job description', 'company2',
-                4000, 'Full-time', True, 'employmentTerm?', True, 'desiredCandidate?', 'Curepe', ['Database', 'Programming', 'butt'])
+    add_listing('listing2', 'job description', 'SpaceCo',
+                4000, 'Full-time', True, True, 'desiredCandidate?', 'Curepe', ['Database Manager', 'Programming', 'butt'])
 
-    return jsonify(message='db initialized!')
+    
 
-@index_views.route('/health', methods=['GET'])
-def health_check():
-    return jsonify({'status':'healthy'})
-	
-	
-	
 
+    # print(get_all_listings_json())
+    print(get_company_listings('SpaceCo'))
+    
+
+    print(get_all_subscribed_alumni())
+    # send_notification(['Programming'])
+    # create_user('username', 'password', 'email')
+    # print(get_user_by_username('rob'))
+    # print(jwt_authenticate('bob', 'bobpass'))
+
+    print('database intialized')
