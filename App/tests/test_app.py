@@ -154,6 +154,67 @@ class EmployeeControllerTest(unittest.TestCase):
         self.assertEqual(result, mock_employee)
 
 
+class TestApplyToListing(unittest.TestCase):
+    @patch('App.models.Application.query.filter_by')
+    @patch('App.models.Listing.query.get')
+    @patch('App.models.Alumni.query.filter_by')
+    @patch('App.models.db.session.add')
+    @patch('App.models.db.session.commit')
+    @patch('App.models.Listing.notify_company_of_application')
+    def test_apply_to_listing(self, mock_notify, mock_commit, mock_db_add, mock_alumni_query, mock_listing_query, mock_application_query):
+        alumni_id = 123
+        listing_id = 1
+        alumni_name = "John Doe"
+        
+        # Creating mock alumni and listing objects
+        mock_alumni = MagicMock(spec=Alumni)
+        mock_alumni.alumni_id = alumni_id
+        mock_alumni.alumni_name = alumni_name
+        
+        mock_listing = MagicMock(spec=Listing)
+        mock_listing.id = listing_id
+        
+        # Mocking the query results
+        mock_listing_query.return_value = mock_listing
+        mock_alumni_query.return_value.filter_by.return_value.first.return_value = mock_alumni
+        
+        # Create a mock application instance
+        mock_application = MagicMock(spec=Application)
+        
+        # Mock the db add operation
+        mock_db_add.return_value = None
+
+        # Call the function under test
+        result = apply_to_listing()
+        
+        # Assert the application was created
+        mock_db_add.assert_called_once_with(mock_application)
+        mock_commit.assert_called_once()
+        
+        # Ensure the notify_company_of_application method was called
+        mock_notify.assert_called_once_with(alumni_name)
+        
+        # Check that the response is as expected
+        self.assertEqual(result[0], 200)
+        self.assertEqual(result[1]["message"], "Application submitted successfully!")
+
+    @patch('App.models.Application.query.filter_by')
+    @patch('App.models.Listing.query.get')
+    @patch('App.models.Alumni.query.filter_by')
+    def test_alumni_or_listing_not_found(self, mock_alumni_query, mock_listing_query, mock_application_query):
+        alumni_id = 123
+        listing_id = 1
+        
+        # Mock queries to return None for either alumni or listing
+        mock_listing_query.return_value = None  # Listing not found
+        mock_alumni_query.return_value.filter_by.return_value.first.return_value = MagicMock(spec=Alumni)
+
+        result = apply_to_listing()
+
+        # Assert error message when listing is not found
+        self.assertEqual(result[0], 404)
+        self.assertEqual(result[1]["message"], "Alumni or Listing not found!")
+
     class TestAddInfoToApplication(unittest.TestCase):
         @patch('App.models.Application.query.filter_by')
         @patch('App.models.Alumni.query.get')
